@@ -7,8 +7,20 @@ import https from "https";
  */
 export async function httpsGetJson(url: string): Promise<any> {
   return new Promise((resolve, reject) => {
+    const urlObj = new URL(url);
+    const options = {
+      hostname: urlObj.hostname,
+      path: urlObj.pathname + urlObj.search,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Connection": "keep-alive",
+      },
+    };
+
     https
-      .get(url, (res) => {
+      .get(options, (res) => {
         let data = "";
 
         if (res.statusCode && (res.statusCode < 200 || res.statusCode >= 300)) {
