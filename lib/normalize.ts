@@ -66,7 +66,19 @@ export function normalizeKosisResponse(
 ): IndicatorSeries {
   const rows = Array.isArray(rawData) ? rawData : [];
 
+  // KOSIS에서 itmId=ALL로 조회하면 여러 항목이 섞여 반환됨.
+  // ITM_NM(항목명) 기준으로 첫 번째 항목의 데이터만 사용하거나,
+  // 단일 항목이면 그대로 사용.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const firstItemName = rows.length > 0 ? rows[0].ITM_NM : null;
+
   const data: ChartDataPoint[] = rows
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .filter((row: any) => {
+      // 첫 번째 항목과 같은 항목만 필터
+      if (firstItemName && row.ITM_NM !== firstItemName) return false;
+      return true;
+    })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((row: any) => {
       const time: string = row.PRD_DE ?? "";

@@ -30,13 +30,14 @@ export async function fetchEcosData(params: EcosParams) {
     cycle,
     startDate,
     endDate,
-    itemCode1 = "",
-    itemCode2 = "",
-    itemCode3 = "",
-    itemCode4 = "",
+    itemCode1 = "?",
+    itemCode2 = "?",
+    itemCode3 = "?",
+    itemCode4 = "?",
   } = params;
 
   // URL 구성: /인증키/요청유형/언어/시작건수/종료건수/통계표코드/주기/시작일/종료일/항목코드1/항목코드2/항목코드3/항목코드4
+  // ECOS API는 항목코드 자리에 "?"를 넣으면 해당 차원의 모든 데이터를 반환합니다.
   const urlParts = [
     ECOS_BASE_URL,
     apiKey,
@@ -48,13 +49,11 @@ export async function fetchEcosData(params: EcosParams) {
     cycle,
     startDate,
     endDate,
+    itemCode1 || "?",
+    itemCode2 || "?",
+    itemCode3 || "?",
+    itemCode4 || "?",
   ];
-
-  // 항목 코드 추가 (빈 문자열이 아닌 경우)
-  if (itemCode1) urlParts.push(itemCode1);
-  if (itemCode2) urlParts.push(itemCode2);
-  if (itemCode3) urlParts.push(itemCode3);
-  if (itemCode4) urlParts.push(itemCode4);
 
   const url = urlParts.join("/");
 
