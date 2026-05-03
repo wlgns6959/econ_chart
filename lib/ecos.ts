@@ -20,6 +20,22 @@ export interface EcosParams {
   itemCode4?: string;
 }
 
+type EcosErrorResponse = {
+  RESULT: {
+    MESSAGE?: string;
+  };
+};
+
+function isEcosErrorResponse(data: unknown): data is EcosErrorResponse {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "RESULT" in data &&
+    typeof (data as { RESULT?: unknown }).RESULT === "object" &&
+    (data as { RESULT?: unknown }).RESULT !== null
+  );
+}
+
 /**
  * ECOS StatisticSearch API를 호출합니다.
  */
@@ -60,8 +76,10 @@ export async function fetchEcosData(params: EcosParams) {
   const data = await httpsGetJson(url);
 
   // ECOS 에러 체크
-  if (data?.RESULT) {
-    throw new Error(`ECOS API 에러: ${data.RESULT.MESSAGE}`);
+  if (isEcosErrorResponse(data)) {
+    throw new Error(
+      `ECOS API 에러: ${data.RESULT.MESSAGE ?? "알 수 없는 오류"}`
+    );
   }
 
   return data;

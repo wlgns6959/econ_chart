@@ -21,6 +21,20 @@ export interface KosisParams {
   endPrdDe: string;
 }
 
+type KosisErrorResponse = {
+  err: string;
+  errMsg?: string;
+};
+
+function isKosisErrorResponse(data: unknown): data is KosisErrorResponse {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "err" in data &&
+    typeof (data as { err?: unknown }).err === "string"
+  );
+}
+
 /**
  * KOSIS 통계자료 API를 호출합니다.
  */
@@ -57,7 +71,7 @@ export async function fetchKosisData(params: KosisParams) {
   const data = await httpsGetJson(url);
 
   // KOSIS 에러 체크 (에러 시 { err: "...", errMsg: "..." } 반환)
-  if (data?.err) {
+  if (isKosisErrorResponse(data)) {
     throw new Error(`KOSIS API 에러: ${data.errMsg || data.err}`);
   }
 

@@ -13,7 +13,7 @@
 
 ## 🛠 기술 스택
 
-- [Next.js 15](https://nextjs.org/) (App Router)
+- [Next.js 16.2.4](https://nextjs.org/) (App Router)
 - TypeScript
 - Tailwind CSS
 - [Plotly.js](https://plotly.com/javascript/) / react-plotly.js

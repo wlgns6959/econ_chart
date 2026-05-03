@@ -19,12 +19,10 @@ export default function DownloadButtons({
 
   const handleDownloadImage = async () => {
     try {
-      // Plotly가 이미 로드된 상태에서 window 객체를 통해 접근
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const Plotly = (window as any).Plotly;
-      const plotEl = document.querySelector(".js-plotly-plot") as HTMLElement;
+      const Plotly = await import("plotly.js/dist/plotly");
+      const plotEl = document.getElementById("economic-indicator-plot");
 
-      if (!plotEl || !Plotly) {
+      if (!plotEl) {
         alert("차트를 찾을 수 없습니다.");
         return;
       }
@@ -38,7 +36,7 @@ export default function DownloadButtons({
 
       const link = document.createElement("a");
       link.href = dataUrl;
-      link.download = `${settings.title || "차트"}_${today}.png`;
+      link.download = `${settings.title || "경제지표"}_차트_${today}.png`;
       link.click();
     } catch {
       alert("이미지 다운로드에 실패했습니다.");

@@ -5,7 +5,7 @@ import https from "https";
  * IPv6 블랙홀 이슈 등으로 UND_ERR_CONNECT_TIMEOUT 오류가 발생하는 문제를 해결하기 위해
  * 기본 https 모듈을 사용해 GET 요청을 보내는 함수입니다.
  */
-export async function httpsGetJson(url: string): Promise<any> {
+export async function httpsGetJson(url: string): Promise<unknown> {
   return new Promise((resolve, reject) => {
     const urlObj = new URL(url);
     const options = {
@@ -37,7 +37,7 @@ export async function httpsGetJson(url: string): Promise<any> {
           try {
             const json = JSON.parse(data);
             resolve(json);
-          } catch (e) {
+          } catch {
             reject(new Error("응답이 유효한 JSON 형식이 아닙니다."));
           }
         });

@@ -1,3 +1,18 @@
+declare module "plotly.js/dist/plotly" {
+  import Plotly from "plotly.js";
+
+  export default Plotly;
+  export function toImage(
+    plotEl: HTMLElement,
+    options: {
+      format: "png";
+      width: number;
+      height: number;
+      scale: number;
+    }
+  ): Promise<string>;
+}
+
 declare module "react-plotly.js" {
   import { Component } from "react";
   import Plotly from "plotly.js";

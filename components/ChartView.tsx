@@ -56,6 +56,7 @@ export default function ChartView({
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       <Plot
+        divId="economic-indicator-plot"
         data={traces}
         layout={{
           ...layout,

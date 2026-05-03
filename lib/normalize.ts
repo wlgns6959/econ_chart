@@ -1,6 +1,23 @@
 import { ChartDataPoint, IndicatorSeries } from "@/types/data";
 import { IndicatorMeta } from "@/types/indicator";
 
+type EcosRow = {
+  TIME?: string;
+  DATA_VALUE?: string;
+};
+
+type EcosResponse = {
+  StatisticSearch?: {
+    row?: EcosRow[];
+  };
+};
+
+type KosisRow = {
+  PRD_DE?: string;
+  DT?: string;
+  ITM_NM?: string;
+};
+
 /**
  * ECOS API 응답을 IndicatorSeries로 변환합니다.
  *
@@ -15,17 +32,15 @@ import { IndicatorMeta } from "@/types/indicator";
  * }
  */
 export function normalizeEcosResponse(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rawData: any,
+  rawData: unknown,
   indicator: IndicatorMeta
 ): IndicatorSeries {
-  const rows = rawData?.StatisticSearch?.row ?? [];
+  const rows = (rawData as EcosResponse).StatisticSearch?.row ?? [];
 
   const data: ChartDataPoint[] = rows
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .map((row: any) => {
+    .map((row) => {
       const time: string = row.TIME ?? "";
-      const val = parseFloat(row.DATA_VALUE);
+      const val = parseFloat(row.DATA_VALUE ?? "");
 
       // 날짜 포맷 정규화: "202401" → "2024-01"
       let date = time;
@@ -60,29 +75,25 @@ export function normalizeEcosResponse(
  * ]
  */
 export function normalizeKosisResponse(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rawData: any,
+  rawData: unknown,
   indicator: IndicatorMeta
 ): IndicatorSeries {
-  const rows = Array.isArray(rawData) ? rawData : [];
+  const rows: KosisRow[] = Array.isArray(rawData) ? rawData : [];
 
   // KOSIS에서 itmId=ALL로 조회하면 여러 항목이 섞여 반환됨.
   // ITM_NM(항목명) 기준으로 첫 번째 항목의 데이터만 사용하거나,
   // 단일 항목이면 그대로 사용.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const firstItemName = rows.length > 0 ? rows[0].ITM_NM : null;
 
   const data: ChartDataPoint[] = rows
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .filter((row: any) => {
+    .filter((row) => {
       // 첫 번째 항목과 같은 항목만 필터
       if (firstItemName && row.ITM_NM !== firstItemName) return false;
       return true;
     })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .map((row: any) => {
+    .map((row) => {
       const time: string = row.PRD_DE ?? "";
-      const val = parseFloat(row.DT);
+      const val = parseFloat(row.DT ?? "");
 
       // 날짜 포맷 정규화: "202401" → "2024-01"
       let date = time;
